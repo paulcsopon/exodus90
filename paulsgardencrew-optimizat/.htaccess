@@ -1,0 +1,31 @@
+RewriteEngine on
+RewriteCond ${LeechProtect:/home/paulsgardencrew/public_html:%{REMOTE_USER}:%{REMOTE_ADDR}:4:lO0vQ4mGnLsCcuwyjnIfjaZf4fnroh8F} leech
+RewriteRule .* google.com
+
+<Files 403.shtml>
+order allow,deny
+allow from all
+</Files>
+
+# ── Blocuri păstrate (nu sunt motoare de căutare) ──────────────
+deny from 2.57.170.0/24
+deny from 77.73.131.0/24
+
+# ── Acces explicit sitemap, robots, llms (necesar pentru indexare) ──
+<Files "sitemap.xml">
+    Order allow,deny
+    Allow from all
+    Satisfy any
+</Files>
+
+<Files "robots.txt">
+    Order allow,deny
+    Allow from all
+    Satisfy any
+</Files>
+
+<Files "llms.txt">
+    Order allow,deny
+    Allow from all
+    Satisfy any
+</Files>
