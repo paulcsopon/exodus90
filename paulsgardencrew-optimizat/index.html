@@ -137,13 +137,19 @@
     <meta name="twitter:description" content="Firmă specializată în proiectare și amenajare grădini, sisteme automate de irigații și întreținere spații verzi în Cluj-Napoca.">
     <link rel="canonical" href="https://paulsgardencrew.ro/">
 
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-KPWD3L0YX3"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-KPWD3L0YX3');
+  function loadAnalytics() {
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-KPWD3L0YX3';
+    document.head.appendChild(s);
+    s.onload = function() {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-KPWD3L0YX3', {'anonymize_ip': true});
+    };
+  }
 </script>
 
 <script>
@@ -165,7 +171,19 @@
     document.addEventListener('DOMContentLoaded', function () {
         var confirmButton = document.querySelector('.u-cookies-consent .u-button-confirm');
         if (confirmButton) {
-            confirmButton.onclick = dynamicLoadScript;
+            confirmButton.onclick = function() {
+                dynamicLoadScript();
+                loadAnalytics();
+            };
+        }
+        var declineButton = document.getElementById('btn-cookie-decline');
+        if (declineButton) {
+            declineButton.onclick = function(e) {
+                e.preventDefault();
+                document.cookie = 'u-gdpr-cookie=declined; path=/; max-age=2592000; SameSite=Lax';
+                var banner = document.querySelector('.u-cookies-consent');
+                if (banner) banner.style.display = 'none';
+            };
         }
     });
     </script>
@@ -174,6 +192,7 @@
             if (!gdprConfirmed()) {
                 return;
             }
+            loadAnalytics();
             dynamicLoadScript('https://www.google.com/recaptcha/enterprise.js?render=6Lc1-dEjAAAAAE-F9QJIY-kmHfeT61XBJqA_SejQ');
         });
     </script>
@@ -700,13 +719,14 @@ c0-7.4,3.4-18.8,18.8-18.8h13.8v15.4H75.5z"></path></svg></span>
             <div class="u-layout-row">
               <div class="u-container-style u-layout-cell u-left-cell u-size-43-md u-size-43-sm u-size-43-xs u-size-46-lg u-size-46-xl u-layout-cell-1">
                 <div class="u-container-layout u-valign-middle u-container-layout-1">
-                  <h3 class="u-text u-text-default u-text-1">Cookies &amp; Privacy</h3>
-                  <p class="u-text u-text-default u-text-2">This website uses cookies to ensure you get the best experience on our website.</p>
+                  <h3 class="u-text u-text-default u-text-1">Cookie-uri &amp; Confidențialitate</h3>
+                  <p class="u-text u-text-default u-text-2">Folosim cookie-uri necesare pentru funcționarea site-ului și, cu acordul tău, cookie-uri analitice (Google Analytics) pentru statistici de vizitare. <a href="cookies.html" style="color:#a8d8a8; text-decoration:underline;">Politica de cookie-uri</a>.</p>
                 </div>
               </div>
               <div class="u-align-left u-container-style u-layout-cell u-right-cell u-size-14-lg u-size-14-xl u-size-17-md u-size-17-sm u-size-17-xs u-layout-cell-2">
                 <div class="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-xl u-valign-top-sm u-valign-top-xs u-container-layout-2">
-                  <a href="###" class="u-btn u-button-confirm u-button-style u-palette-1-base u-btn-1">Confirm</a>
+                  <a href="###" class="u-btn u-button-confirm u-button-style u-palette-1-base u-btn-1">Accept toate</a>
+                  <a href="###" id="btn-cookie-decline" class="u-btn u-button-style u-btn-2" style="background:transparent; color:#ccc; border:1px solid #ccc; margin-top:8px; display:block; text-align:center; padding:8px 20px; border-radius:27px; font-size:0.85rem;">Refuz cookie-urile analitice</a>
                 </div>
               </div>
             </div>
