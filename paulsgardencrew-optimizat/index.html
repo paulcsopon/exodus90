@@ -987,4 +987,83 @@ c0-7.4,3.4-18.8,18.8-18.8h13.8v15.4H75.5z"></path></svg></span>
     padding-right: 20px;
   }
 }</style>
+<script>
+(function () {
+  'use strict';
+
+  var CRM_API = 'https://pgc.contact/crm-peisagistica/api/contact_form.php';
+
+  function handleContactFormSubmit(form) {
+    var nameEl  = form.querySelector('[name="name"]');
+    var emailEl = form.querySelector('[name="email"]');
+    var phoneEl = form.querySelector('[name="phone"]');
+    var msgEl   = form.querySelector('[name="message"]');
+    var agreeEl = form.querySelector('[name="agree"]');
+
+    var name    = nameEl  ? nameEl.value.trim()  : '';
+    var email   = emailEl ? emailEl.value.trim() : '';
+    var phone   = phoneEl ? phoneEl.value.trim() : '';
+    var message = msgEl   ? msgEl.value.trim()   : '';
+
+    if (!name || !email || !phone) { form.reportValidity(); return; }
+    if (agreeEl && !agreeEl.checked) {
+      agreeEl.setCustomValidity('Trebuie să accepți termenele și condițiile.');
+      form.reportValidity();
+      agreeEl.setCustomValidity('');
+      return;
+    }
+
+    var successEl  = form.querySelector('.u-form-send-success');
+    var errorEl    = form.querySelector('.u-form-send-error');
+    var submitBtnEl = form.querySelector('.u-btn-submit');
+
+    if (submitBtnEl) { submitBtnEl.style.opacity = '0.5'; submitBtnEl.style.pointerEvents = 'none'; }
+
+    fetch(CRM_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name, email: email, phone: phone, message: message })
+    })
+    .then(function (r) { return r.json(); })
+    .then(function (result) {
+      if (submitBtnEl) { submitBtnEl.style.opacity = ''; submitBtnEl.style.pointerEvents = ''; }
+      if (result.success) {
+        if (successEl) { successEl.textContent = 'Mulțumim! Te vom contacta în curând.'; successEl.style.display = 'block'; }
+        if (errorEl)   { errorEl.style.display = 'none'; }
+        form.reset();
+      } else {
+        if (errorEl)   { errorEl.textContent = result.message || 'A apărut o eroare. Vă rugăm încercați din nou.'; errorEl.style.display = 'block'; }
+        if (successEl) { successEl.style.display = 'none'; }
+      }
+    })
+    .catch(function () {
+      if (submitBtnEl) { submitBtnEl.style.opacity = ''; submitBtnEl.style.pointerEvents = ''; }
+      if (errorEl) { errorEl.textContent = 'Eroare de conexiune. Vă rugăm încercați din nou.'; errorEl.style.display = 'block'; }
+    });
+  }
+
+  // Wire up after all scripts (including nicepage.js defer) have finished loading.
+  window.addEventListener('load', function () {
+    var form = document.querySelector('#sec-08e2 form');
+    if (!form) return;
+
+    // Capture-phase listeners run before nicepage's bubble-phase handlers,
+    // so our code always wins regardless of listener-registration order.
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      handleContactFormSubmit(form);
+    }, true);
+
+    var btn = form.querySelector('.u-btn-submit');
+    if (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        handleContactFormSubmit(form);
+      }, true);
+    }
+  });
+}());
+</script>
 </body></html>
